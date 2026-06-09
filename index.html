@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bio Link Page — Wealthy Mindset</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold:    #C9A84C;
+    --gold-lt: #E8D08A;
+    --navy:    #0D1B2A;
+    --navy-lt: #162437;
+    --navy-mid:#1E2F42;
+    --cream:   #F5F0E8;
+    --white:   #FDFAF5;
+    --text:    #1A1A1A;
+    --muted:   #888070;
+    --radius:  14px;
+    --radius-sm: 8px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 0 16px 80px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(201,168,76,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 80% 90%, rgba(201,168,76,0.08) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    width: 100%;
+    max-width: 480px;
+    padding-top: 52px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Language toggle ── */
+  .lang-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 36px;
+  }
+
+  .lang-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    padding: 6px 18px;
+    border-radius: 99px;
+    border: 1px solid rgba(201,168,76,0.35);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .lang-btn.active { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+  .lang-btn:hover:not(.active) { border-color: var(--gold); color: var(--gold-lt); }
+
+  /* ── Profile ── */
+  .profile { text-align: center; margin-bottom: 36px; }
+
+  .avatar {
+    width: 84px; height: 84px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    margin: 0 auto 16px;
+    background: linear-gradient(135deg, var(--navy-lt), #243447);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    box-shadow: 0 0 0 6px rgba(201,168,76,0.12);
+    animation: pulse-ring 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-ring {
+    0%, 100% { box-shadow: 0 0 0 6px rgba(201,168,76,0.12); }
+    50%       { box-shadow: 0 0 0 10px rgba(201,168,76,0.06); }
+  }
+
+  .handle { font-size: 13px; font-weight: 400; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+
+  .name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px; font-weight: 300;
+    color: var(--white); letter-spacing: 0.02em; margin-bottom: 10px; line-height: 1.2;
+  }
+
+  .bio { font-size: 13px; font-weight: 300; color: rgba(245,240,232,0.6); line-height: 1.7; max-width: 320px; margin: 0 auto; }
+  .bio strong { color: var(--gold-lt); font-weight: 500; }
+
+  /* ── Section label ── */
+  .section-label {
+    font-size: 10px; font-weight: 500; letter-spacing: 0.18em;
+    text-transform: uppercase; color: rgba(201,168,76,0.55);
+    text-align: center; margin: 28px 0 14px;
+  }
+
+  /* ══════════════════════════════════════
+     SIMPLE LINK CARD (no sub-links)
+  ══════════════════════════════════════ */
+  .links { display: flex; flex-direction: column; gap: 10px; }
+
+  .link-card {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 18px;
+    border-radius: var(--radius);
+    border: 1px solid rgba(201,168,76,0.2);
+    background: rgba(22,36,55,0.7);
+    backdrop-filter: blur(12px);
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), border-color 0.2s, box-shadow 0.2s;
+    position: relative; overflow: hidden;
+  }
+
+  .link-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(105deg, rgba(201,168,76,0.06) 0%, transparent 60%);
+    opacity: 0; transition: opacity 0.2s;
+  }
+
+  .link-card:hover { transform: translateY(-2px) scale(1.005); border-color: rgba(201,168,76,0.5); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+  .link-card:hover::before { opacity: 1; }
+  .link-card:active { transform: scale(0.98); }
+
+  .card-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+    background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.2);
+  }
+
+  .card-body { flex: 1; min-width: 0; }
+  .card-title { font-size: 14px; font-weight: 500; color: var(--white); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card-desc  { font-size: 12px; font-weight: 300; color: rgba(245,240,232,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .card-badge {
+    font-size: 10px; font-weight: 500; letter-spacing: 0.06em;
+    padding: 3px 8px; border-radius: 99px;
+    background: rgba(201,168,76,0.15); color: var(--gold-lt);
+    border: 1px solid rgba(201,168,76,0.25); flex-shrink: 0; white-space: nowrap;
+  }
+  .card-badge.free { background: rgba(100,200,120,0.12); color: #7DD898; border-color: rgba(100,200,120,0.25); }
+
+  .card-arrow { color: rgba(201,168,76,0.4); font-size: 16px; flex-shrink: 0; transition: transform 0.2s, color 0.2s; }
+  .link-card:hover .card-arrow { transform: translateX(3px); color: var(--gold); }
+
+  /* ══════════════════════════════════════
+     EXPANDABLE PLATFORM CARD (with sub-links)
+     HOW TO ADD A NEW PLATFORM:
+     1. Copy a <div class="platform-group"> block
+     2. Change the icon, title, desc, badge
+     3. Add <a class="sub-link"> items inside .sub-links
+     4. Each sub-link needs: href, data-id, data-en attributes
+  ══════════════════════════════════════ */
+  .platform-group { margin-bottom: 10px; }
+
+  .platform-header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 18px;
+    border-radius: var(--radius);
+    border: 1px solid rgba(201,168,76,0.2);
+    background: rgba(22,36,55,0.7);
+    backdrop-filter: blur(12px);
+    cursor: pointer;
+    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), border-color 0.2s, box-shadow 0.2s;
+    position: relative; overflow: hidden;
+    user-select: none;
+  }
+
+  .platform-header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(105deg, rgba(201,168,76,0.06) 0%, transparent 60%);
+    opacity: 0; transition: opacity 0.2s;
+  }
+
+  .platform-header:hover { border-color: rgba(201,168,76,0.5); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+  .platform-header:hover::before { opacity: 1; }
+  .platform-group.open .platform-header { border-radius: var(--radius) var(--radius) 0 0; border-color: rgba(201,168,76,0.4); border-bottom-color: transparent; }
+
+  .expand-icon {
+    color: rgba(201,168,76,0.5); font-size: 18px; flex-shrink: 0;
+    transition: transform 0.3s ease, color 0.2s;
+    line-height: 1;
+  }
+  .platform-group.open .expand-icon { transform: rotate(180deg); color: var(--gold); }
+
+  /* Sub-links container */
+  .sub-links {
+    display: none;
+    flex-direction: column;
+    background: rgba(14,24,36,0.85);
+    border: 1px solid rgba(201,168,76,0.4);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+  }
+
+  .platform-group.open .sub-links { display: flex; }
+
+  /* ── HOW TO ADD A NEW SUB-LINK ──
+     Copy this block inside any .sub-links div:
+
+     <a class="sub-link" href="YOUR_AFFILIATE_URL" target="_blank"
+        data-id="Nama Produk"
+        data-en="Product Name">
+       <span class="sub-link-dot"></span>
+       <span class="sub-link-body">
+         <span class="sub-link-name" data-id="Nama Produk" data-en="Product Name">Product Name</span>
+         <span class="sub-link-meta" data-id="Deskripsi singkat" data-en="Short description">Short description</span>
+       </span>
+       <span class="sub-link-arrow">›</span>
+     </a>
+
+     Replace YOUR_AFFILIATE_URL, data-id (Indonesian), data-en (English)
+  ── */
+
+  .sub-link {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 18px 12px 24px;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(201,168,76,0.08);
+    transition: background 0.15s;
+    position: relative;
+  }
+
+  .sub-link:last-child { border-bottom: none; }
+  .sub-link:hover { background: rgba(201,168,76,0.05); }
+  .sub-link:hover .sub-link-arrow { transform: translateX(3px); color: var(--gold); }
+
+  .sub-link-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(201,168,76,0.4); flex-shrink: 0;
+    transition: background 0.2s;
+  }
+  .sub-link:hover .sub-link-dot { background: var(--gold); }
+
+  .sub-link-body { flex: 1; min-width: 0; }
+  .sub-link-name { font-size: 13px; font-weight: 500; color: rgba(245,240,232,0.85); display: block; margin-bottom: 1px; }
+  .sub-link-meta { font-size: 11px; font-weight: 300; color: rgba(245,240,232,0.35); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .sub-link-arrow { color: rgba(201,168,76,0.3); font-size: 14px; flex-shrink: 0; transition: transform 0.2s, color 0.2s; }
+
+  /* Add sub-link button (for easy replication hint) */
+  .sub-link-add {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 18px 10px 24px;
+    font-size: 12px; color: rgba(201,168,76,0.3);
+    border-top: 1px dashed rgba(201,168,76,0.1);
+    cursor: default;
+  }
+
+  /* ── Divider ── */
+  .divider { display: flex; align-items: center; gap: 12px; margin: 24px 0 0; }
+  .divider-line { flex: 1; height: 1px; background: rgba(201,168,76,0.15); }
+  .divider-diamond { width: 8px; height: 8px; background: var(--gold); transform: rotate(45deg); flex-shrink: 0; }
+
+  /* ── Footer ── */
+  .footer { text-align: center; margin-top: 40px; font-size: 11px; color: rgba(245,240,232,0.25); letter-spacing: 0.06em; line-height: 1.8; }
+
+  /* ── Toast ── */
+  .copied-toast {
+    position: fixed; bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--gold); color: var(--navy);
+    font-size: 12px; font-weight: 500;
+    padding: 8px 20px; border-radius: 99px;
+    opacity: 0; pointer-events: none;
+    transition: all 0.3s ease; z-index: 100; white-space: nowrap;
+  }
+  .copied-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Language toggle -->
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('id')" id="btn-id">🇮🇩 Indonesia</button>
+    <button class="lang-btn"        onclick="setLang('en')" id="btn-en">🌐 English</button>
+  </div>
+
+  <!-- Profile -->
+  <div class="profile">
+    <div class="avatar">💰</div>
+    <div class="handle">@yourhandle</div>
+    <h1 class="name" id="profile-name">Mindset Kaya &amp; Kebebasan Finansial</h1>
+    <p class="bio" id="profile-bio">
+      Berbagi tips <strong>investasi, passive income</strong> &amp; gaya hidup bebas finansial.
+      Mulai dari Rp10.000 🇮🇩✈️
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════
+       SECTION: INVESTING & FINANCE
+  ═══════════════════════════════ -->
+  <div class="section-label" id="sec-invest">📈 Investasi &amp; Keuangan</div>
+  <div class="links">
+
+    <a class="link-card" href="https://play.google.com/store/apps/details?id=id.bibit" target="_blank">
+      <div class="card-icon">🌱</div>
+      <div class="card-body">
+        <div class="card-title" data-id="Bibit — Reksa Dana" data-en="Bibit — Mutual Fund">Bibit — Reksa Dana</div>
+        <div class="card-desc" data-id="Mulai investasi dari Rp10.000" data-en="Start investing from Rp10,000">Mulai investasi dari Rp10.000</div>
+      </div>
+      <span class="card-badge free" data-id="GRATIS" data-en="FREE">GRATIS</span>
+      <span class="card-arrow">›</span>
+    </a>
+
+    <a class="link-card" href="https://play.google.com/store/apps/details?id=com.ajaib.investasi" target="_blank">
+      <div class="card-icon">📊</div>
+      <div class="card-body">
+        <div class="card-title" data-id="Ajaib — Saham &amp; Reksa Dana" data-en="Ajaib — Stocks &amp; Mutual Funds">Ajaib — Saham &amp; Reksa Dana</div>
+        <div class="card-desc" data-id="Buka akun saham gratis" data-en="Open a free stock account">Buka akun saham gratis</div>
+      </div>
+      <span class="card-badge free" data-id="GRATIS" data-en="FREE">GRATIS</span>
+      <span class="card-arrow">›</span>
+    </a>
+
+    <a class="link-card" href="https://play.google.com/store/apps/details?id=com.moomoo.trade" target="_blank">
+      <div class="card-icon">🌏</div>
+      <div class="card-body">
+        <div class="card-title" data-id="Moomoo — Saham Global" data-en="Moomoo — Global Stocks">Moomoo — Saham Global</div>
+        <div class="card-desc" data-id="Trading US, HK, SG tanpa komisi" data-en="Trade US, HK &amp; SG commission-free">Trading US, HK, SG tanpa komisi</div>
+      </div>
+      <span class="card-badge" data-id="HK/SG/US" data-en="HK/SG/US">HK/SG/US</span>
+      <span class="card-arrow">›</span>
+    </a>
+
+    <a class="link-card" href="https://play.google.com/store/apps/details?id=com.transferwise.android" target="_blank">
+      <div class="card-icon">💱</div>
+      <div class="card-body">
+        <div class="card-title" data-id="Wise — Transfer Luar Negeri" data-en="Wise — International Transfer">Wise — Transfer Luar Negeri</div>
+        <div class="card-desc" data-id="Kurs terbaik, tanpa biaya tersembunyi" data-en="Real rate, no hidden fees">Kurs terbaik, tanpa biaya tersembunyi</div>
+      </div>
+      <span class="card-badge" data-id="GLOBAL" data-en="GLOBAL">GLOBAL</span>
+      <span class="card-arrow">›</span>
+    </a>
+
+  </div>
+
+  <!-- ═══════════════════════════════
+       SECTION: TRAVEL
+       Traveloka & Tiket.com are EXPANDABLE
+       with product-level sub-links
+  ═══════════════════════════════ -->
+  <div class="section-label" id="sec-travel">✈️ Travel &amp; Experiences</div>
+  <div class="links">
+
+    <!-- ── TRAVELOKA — Expandable ── -->
+    <!-- HOW TO ADD A NEW TRAVELOKA PRODUCT:
+         Copy any <a class="sub-link"> block inside .sub-links below
+         and update href, data-id, data-en values -->
+    <div class="platform-group" id="pg-traveloka">
+      <div class="platform-header" onclick="togglePlatform('pg-traveloka')">
+        <div class="card-icon">✈️</div>
+        <div class="card-body">
+          <div class="card-title" data-id="Traveloka" data-en="Traveloka">Traveloka</div>
+          <div class="card-desc" data-id="Tiket, hotel, aktivitas — harga terbaik" data-en="Flights, hotels, activities — best price">Tiket, hotel, aktivitas — harga terbaik</div>
+        </div>
+        <span class="card-badge" data-id="ID/SG/HK" data-en="ID/SG/HK">ID/SG/HK</span>
+        <span class="expand-icon">⌄</span>
+      </div>
+      <div class="sub-links">
+        <a class="sub-link" href="https://play.google.com/store/apps/details?id=com.traveloka.android" target="_blank">
+          <span class="sub-link-dot"></span>
+          <span class="sub-link-body">
+            <span class="sub-link-name" data-id="Tiket Pesawat" data-en="Flights">Tiket Pesawat</span>
+            <span class="sub-link-meta" data-id="Harga terbaik untuk semua rute" data-en="Best price for all routes">Harga terbaik untuk semua rute</span>
+          </span>
+          <span class="sub-link-arrow">›</span>
+        </a>
+        <a class="sub-link" href="https://play.google.com/store/apps/details?id=com.traveloka.android" target="_blank">
+          <span class="sub-link-dot"></span>
+          <span class="sub-link-body">
+            <span class="sub-link-name" data-id="Hotel" data-en="Hotels">Hotel</span>
+            <span class="sub-link-meta" data-id="Dari budget hingga bintang 5" data-en="From budget to 5-star">Dari budget hingga bintang 5</span>
+          </span>
+          <span class="sub-link-arrow">›</span>
+        </a>
+        <a class="sub-link" href="https://play.google.com/store/apps/details?id=com.traveloka.android" target="_blank">
+          <span class="sub-link-dot"></span>
+          <span class="sub-link-body">
+            <span class="sub-link-name" data-id="Xperience &amp; Aktivitas" data-en="Xperience &amp; Activities">Xperience &amp; Aktivitas</span>
+            <span class="sub-link-meta" data-id="Tur, atraksi, aktivitas seru" data-en="Tours, attractions, fun activities">Tur, atraksi, aktivitas seru</span>
+          </span>
+          <span class="sub-link-arrow">›</span>
+        </a>
+        <a class="sub-link" href="https://play.google.com/store/apps/details?id=com.traveloka.android" target="_blank">
+          <span class="sub-link-dot"></span>
+          <span class="sub-link-body">
+            <span class="sub-link-name" data-id="Kereta Api" data-en="Train Tickets">Kereta Api</span>
+            <span class="sub-link-meta" data-id="Pesan tiket KAI lebih mudah" data-en="Book KAI tickets easily">Pesan tiket KAI lebih mudah</span>
+          </span>
+          <span class="sub-link-arrow">›</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- ── TIKET.COM — Expandable ── -->
+    <!-- HOW TO ADD A NEW TIKET.COM PRODUCT:
+         Copy any <a class="sub-link"> block inside .sub-links below
+         and update href, data-id, data-en values -->
+    <div class="platform-group" id="pg-tiket">
+      <div class="platform-header" onclick="togglePlatform('pg-tiket')">
+        <div class="card-icon">🎫</div>
+        <div class="card-body">
+          <div class="card-title" data-id="Tiket.com" data-en="Tiket.com">Tiket.com</div>
+          <div class="card-desc" data-id="Tiket, hotel, to do — harga murah" data-en="Flights, hotels, to do — cheap price">Tiket, hotel, to do — harga murah</div>
+        </div>
+        <span class="card-badge" data-id="ID" data-en="ID">ID</span>
+        <span class="expand-icon">⌄</span>
+      </div>
+      <div class="sub-links">
+        <a class="sub-link" href="https://play.google.com/store/apps/details?id=com.tiket.gores" target="_blank">
+          <span class="sub-link-dot"></span>
+          <span class="sub-link-body">
+            <span class="sub-link-name" data-id="Tiket Pesawat" data-en="Flights">Tiket Pesawat</span>
+            <span class="sub-link-meta" data-id="Perbandingan harga terbaik" data-en="Best price comparison">Perbandingan harga terbaik</span>
+          </span>
+          <span class="sub-link-arrow">›</span>
+        </a>
+        <a class="sub-link" href="https://play.google.com/store/apps/details?id=com.tiket.gores" target="_blank">
+          <span class="sub-link-dot"></span>
+          <span class="sub-link-body">
+            <span class="sub-link-name" data-id="Hotel" data-en="Hotels">Hotel</span>
+            <span class="sub-link-meta" data-id="Penginapan terbaik di seluruh Indonesia" data-en="Best stays across Indonesia">Penginapan terbaik di seluruh Indonesia</span>
+          </span>
+          <span class="sub-link-arrow">›</span>
+        </a>
+        <a class="sub-link" href="https://play.google.com/store/apps/details?id=com.tiket.gores" target="_blank">
+          <span class="sub-link-dot"></span>
+          <span class="sub-link-body">
+            <span class="sub-link-name" data-id="To Do — Atraksi &amp; Aktivitas" data-en="To Do — Attractions &amp; Activities">To Do — Atraksi &amp; Aktivitas</span>
+            <span class="sub-link-meta" data-id="Tiket wisata, konser, dan event" data-en="Attraction tickets, concerts, events">Tiket wisata, konser, dan event</span>
+          </span>
+          <span class="sub-link-arrow">›</span>
+        </a>
+      </div>
+    </div>
+
+    <a class="link-card" href="https://play.google.com/store/apps/details?id=com.klook.client" target="_blank">
+      <div class="card-icon">🎡</div>
+      <div class="card-body">
+        <div class="card-title" data-id="Klook — Aktivitas Travel" data-en="Klook — Travel Activities">Klook — Aktivitas Travel</div>
+        <div class="card-desc" data-id="Tur dan atraksi seluruh dunia" data-en="Tours and attractions worldwide">Tur dan atraksi seluruh dunia</div>
+      </div>
+      <span class="card-badge" data-id="GLOBAL" data-en="GLOBAL">GLOBAL</span>
+      <span class="card-arrow">›</span>
+    </a>
+
+    <a class="link-card" href="https://play.google.com/store/apps/details?id=com.airbnb.android" target="_blank">
+      <div class="card-icon">🏡</div>
+      <div class="card-body">
+        <div class="card-title" data-id="Airbnb — Menginap Unik" data-en="Airbnb — Unique Stays">Airbnb — Menginap Unik</div>
+        <div class="card-desc" data-id="Diskon pertama booking lewat link ini" data-en="First booking discount via this link">Diskon pertama booking lewat link ini</div>
+      </div>
+      <span class="card-badge" data-id="DISKON" data-en="DISCOUNT">DISKON</span>
+      <span class="card-arrow">›</span>
+    </a>
+
+  </div>
+
+  <!-- ═══════════════════════════════
+       SECTION: SHOPPING
+       Shopee, Tokopedia, TikTok Shop are EXPANDABLE
+       with product-level sub-links
+  ═══════════════════════════════ -->
+  <div class="section-label" id="sec-shop">🛍 Belanja &amp; Lifestyle</div>
+  <div class="links">
+
+    <!-- ── SHOPEE — Expandable ── -->
+    <!-- HOW TO ADD A NEW SHOPEE PRODUCT:
+         Copy any <a class="sub-link"> block inside .sub-links below
+         Update: href with your Shopee affiliate product link
+                 data-id with Indonesian product name
+                 data-en with English product name -->
+    <div class="platform-group" id="pg-shopee">
+      <div class="platform-header" onclick="togglePlatform('pg-shopee')">
+        <div class="card-icon">🛒</div>
+        <div class="card-body">
+          <div class="card-title" data-id="Shopee" data-en="Shopee">Shopee</div>
+          <div class="card-desc" data-id="Produk pilihan terbaik dengan harga spesial" data-en="Curated products at special prices">Produk pilihan terbaik dengan harga spesial</div>
+        </div>
+        <span class="card-badge" data-id="PROMO" data-en="DEALS">PROMO</span>
+        <span class="expand-icon">⌄</span>
+      </div>
+      <div class="sub-links">
+        <a class="sub-link" href="https://play.google.com/store/apps/details?id=com.shopee.id" target="_blank">
+          <span class="sub-link-dot"></span>
+          <span class="sub-link-body">
+            <span class="sub-link-name" data-id="Produk Rekomendasi 1" data-en="Recommended Product 1">Produk Rekomendasi 1</span>
+            <span class="sub-link-meta" data-id="Ganti dengan nama produk kamu" data-en="Replace with your product name">Ganti dengan nama produk kamu</span>
+          </span>
+          <span class="sub-link-arrow">›</span>
+        </a>
+        <a class="sub-link" href="https://play.google.com/store/apps/details?id=com.shopee.id" target="_blank">
+          <span class="sub-link-dot"></span>
+          <span class="sub-link-body">
+            <span class="sub-link-name" data-id="Produk Rekomendasi 2" data-en="Recommended Product 2">Produk Rekomendasi 2</span>
+            <span class="sub-link-meta" data-id="Ganti dengan nama produk kamu" data-en="Replace with your product name">Ganti dengan nama produk kamu</span>
+          </span>
+          <span class="sub-link-arrow">›</span>
+        </a>
+        <a class="sub-link" href="https://play.google.com/store/apps/details?id=com.shopee.id" target="_blank">
+          <span class="sub-link-dot"></span>
+          <span class="sub-link-body">
+            <span class="sub-link-name" data-id="Produk Rekomendasi 3" data-en="Recommended Product 3">Produk Rekomendasi 3</span>
+            <span class="sub-link-meta" data-id="Ganti dengan nama produk kamu" data-en="Replace with your product name">Ganti dengan nama produk kamu</span>
+          </span>
+          <span class="sub-link-arrow">›</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- ── TOKOPEDIA — Expandable ── -->
+    <div class="platform-group" id="pg-tokopedia">
+      <div class="platform-header" onclick="togglePlatform('pg-tokopedia')">
+        <div class="card-icon">🟢</div>
+        <div class="card-body">
+          <div class="card-title" data-id="Tokopedia" data-en="Tokopedia">Tokopedia</div>
+          <div class="card-desc" data-id="Produk original dari official store" data-en="Original products from official stores">Produk original dari official store</div>
+        </div>
+        <span class="card-badge" data-id="UP TO 10%" data-en="UP TO 10%">UP TO 10%</span>
+        <span class="expand-icon">⌄</span>
+      </div>
+      <div class="sub-links">
+        <a class="sub-link" href="https://play.google.com/store/apps/details?id=com.tokopedia.tkpd" target="_blank">
+          <span class="sub-link-dot"></span>
+          <span class="sub-link-body">
+            <span class="sub-link-name" data-id="Produk Rekomendasi 1" data-en="Recommended Product 1">Produk Rekomendasi 1</span>
+            <span class="sub-link-meta" data-id="Ganti dengan nama produk kamu" data-en="Replace with your product name">Ganti dengan nama produk kamu</span>
+          </span>
+          <span class="sub-link-arrow">›</span>
+        </a>
+        <a class="sub-link" href="https://play.google.com/store/apps/details?id=com.tokopedia.tkpd" target="_blank">
+          <span class="sub-link-dot"></span>
+          <span class="sub-link-body">
+            <span class="sub-link-name" data-id="Produk Rekomendasi 2" data-en="Recommended Product 2">Produk Rekomendasi 2</span>
+            <span class="sub-link-meta" data-id="Ganti dengan nama produk kamu" data-en="Replace with your product name">Ganti dengan nama produk kamu</span>
+          </span>
+          <span class="sub-link-arrow">›</span>
+        </a>
+        <a class="sub-link" href="https://play.google.com/store/apps/details?id=com.tokopedia.tkpd" target="_blank">
+          <span class="sub-link-dot"></span>
+          <span class="sub-link-body">
+            <span class="sub-link-name" data-id="Produk Rekomendasi 3" data-en="Recommended Product 3">Produk Rekomendasi 3</span>
+            <span class="sub-link-meta" data-id="Ganti dengan nama produk kamu" data-en="Replace with your product name">Ganti dengan nama produk kamu</span>
+          </span>
+          <span class="sub-link-arrow">›</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- ── TIKTOK SHOP — Expandable ── -->
+    <div class="platform-group" id="pg-tiktokshop">
+      <div class="platform-header" onclick="togglePlatform('pg-tiktokshop')">
+        <div class="card-icon">🎵</div>
+        <div class="card-body">
+          <div class="card-title" data-id="TikTok Shop" data-en="TikTok Shop">TikTok Shop</div>
+          <div class="card-desc" data-id="Produk viral dengan komisi terbaik" data-en="Viral products with best commission">Produk viral dengan komisi terbaik</div>
+        </div>
+        <span class="card-badge" data-id="UP TO 34%" data-en="UP TO 34%">UP TO 34%</span>
+        <span class="expand-icon">⌄</span>
+      </div>
+      <div class="sub-links">
+        <a class="sub-link" href="https://play.google.com/store/apps/details?id=com.zhiliaoapp.musically" target="_blank">
+          <span class="sub-link-dot"></span>
+          <span class="sub-link-body">
+            <span class="sub-link-name" data-id="Produk Rekomendasi 1" data-en="Recommended Product 1">Produk Rekomendasi 1</span>
+            <span class="sub-link-meta" data-id="Ganti dengan nama produk kamu" data-en="Replace with your product name">Ganti dengan nama produk kamu</span>
+          </span>
+          <span class="sub-link-arrow">›</span>
+        </a>
+        <a class="sub-link" href="https://play.google.com/store/apps/details?id=com.zhiliaoapp.musically" target="_blank">
+          <span class="sub-link-dot"></span>
+          <span class="sub-link-body">
+            <span class="sub-link-name" data-id="Produk Rekomendasi 2" data-en="Recommended Product 2">Produk Rekomendasi 2</span>
+            <span class="sub-link-meta" data-id="Ganti dengan nama produk kamu" data-en="Replace with your product name">Ganti dengan nama produk kamu</span>
+          </span>
+          <span class="sub-link-arrow">›</span>
+        </a>
+        <a class="sub-link" href="https://play.google.com/store/apps/details?id=com.zhiliaoapp.musically" target="_blank">
+          <span class="sub-link-dot"></span>
+          <span class="sub-link-body">
+            <span class="sub-link-name" data-id="Produk Rekomendasi 3" data-en="Recommended Product 3">Produk Rekomendasi 3</span>
+            <span class="sub-link-meta" data-id="Ganti dengan nama produk kamu" data-en="Replace with your product name">Ganti dengan nama produk kamu</span>
+          </span>
+          <span class="sub-link-arrow">›</span>
+        </a>
+      </div>
+    </div>
+
+    <a class="link-card" href="https://www.notion.com" target="_blank">
+      <div class="card-icon">📒</div>
+      <div class="card-body">
+        <div class="card-title" data-id="Notion — Kelola Hidupmu" data-en="Notion — Organise Your Life">Notion — Kelola Hidupmu</div>
+        <div class="card-desc" data-id="Goals, keuangan, jurnal — satu tempat" data-en="Goals, finances, journaling — one app">Goals, keuangan, jurnal — satu tempat</div>
+      </div>
+      <span class="card-badge free" data-id="GRATIS" data-en="FREE">GRATIS</span>
+      <span class="card-arrow">›</span>
+    </a>
+
+  </div>
+
+  <!-- ═══════════════════════════════
+       SECTION: LEARNING
+  ═══════════════════════════════ -->
+  <div class="section-label" id="sec-learn">🎓 Belajar &amp; Upgrade Skill</div>
+  <div class="links">
+
+    <a class="link-card" href="https://www.skillshare.com" target="_blank">
+      <div class="card-icon">🎓</div>
+      <div class="card-body">
+        <div class="card-title" data-id="Skillshare — Upgrade Skill" data-en="Skillshare — Learn New Skills">Skillshare — Upgrade Skill</div>
+        <div class="card-desc" data-id="1 bulan gratis · 30.000+ kelas" data-en="1 month free · 30,000+ classes">1 bulan gratis · 30.000+ kelas</div>
+      </div>
+      <span class="card-badge free" data-id="1 BLN GRATIS" data-en="1 MO FREE">1 BLN GRATIS</span>
+      <span class="card-arrow">›</span>
+    </a>
+
+    <a class="link-card" href="https://www.syfe.com" target="_blank">
+      <div class="card-icon">🤖</div>
+      <div class="card-body">
+        <div class="card-title" data-id="Syfe — Robo Advisor SG" data-en="Syfe — Robo Advisor (Singapore)">Syfe — Robo Advisor SG</div>
+        <div class="card-desc" data-id="Investasi otomatis dalam SGD" data-en="Automated investing in SGD">Investasi otomatis dalam SGD</div>
+      </div>
+      <span class="card-badge" data-id="SINGAPURA" data-en="SINGAPORE">SINGAPURA</span>
+      <span class="card-arrow">›</span>
+    </a>
+
+  </div>
+
+  <!-- ═══════════════════════════════
+       SECTION: AI TOOLS
+       Tools for making money with AI.
+       Expandable platform groups for
+       tools with multiple plans/products.
+
+       HOW TO ADD A NEW AI TOOL:
+       - Simple tool → copy a .link-card block
+       - Tool with multiple plans → copy a
+         .platform-group block and add sub-links
+  ═══════════════════════════════ -->
+  <div class="section-label" id="sec-ai">🤖 Tools AI &amp; Otomasi</div>
+
+  <!-- AI section intro chip -->
+  <div style="text-align:center; margin-bottom:16px;">
+    <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:500;letter-spacing:0.08em;padding:5px 14px;border-radius:99px;background:rgba(130,207,255,0.1);border:1px solid rgba(130,207,255,0.2);color:rgba(130,207,255,0.8);" id="ai-chip">✦ Akun ini 100% dijalankan oleh AI</span>
+  </div>
+
+  <div class="links">
+
+    <!-- ── CLAUDE (Anthropic) — Simple ── -->
+    <a class="link-card" href="https://claude.ai" target="_blank" style="border-color:rgba(130,207,255,0.25);">
+      <div class="card-icon" style="background:rgba(130,207,255,0.1);border-color:rgba(130,207,255,0.2);">🧠</div>
+      <div class="card-body">
+        <div class="card-title" data-id="Claude AI — Asisten AI Terbaik" data-en="Claude AI — Best AI Assistant">Claude AI — Asisten AI Terbaik</div>
+        <div class="card-desc" data-id="AI yang menulis semua konten akun ini" data-en="The AI that writes all content on this account">AI yang menulis semua konten akun ini</div>
+      </div>
+      <span class="card-badge" style="background:rgba(130,207,255,0.12);color:rgba(130,207,255,0.9);border-color:rgba(130,207,255,0.25);" data-id="COBA GRATIS" data-en="TRY FREE">COBA GRATIS</span>
+      <span class="card-arrow">›</span>
+    </a>
+
+    <!-- ── SKILLSHARE AI — Simple ── -->
+    <a class="link-card" href="https://www.skillshare.com" target="_blank" style="border-color:rgba(130,207,255,0.25);">
+      <div class="card-icon" style="background:rgba(130,207,255,0.1);border-color:rgba(130,207,255,0.2);">🎓</div>
+      <div class="card-body">
+        <div class="card-title" data-id="Skillshare — Kursus AI" data-en="Skillshare — AI Courses">Skillshare — Kursus AI</div>
+        <div class="card-desc" data-id="Belajar AI, automation, dan digital income" data-en="Learn AI, automation, and digital income">Belajar AI, automation, dan digital income</div>
+      </div>
+      <span class="card-badge free" data-id="1 BLN GRATIS" data-en="1 MO FREE">1 BLN GRATIS</span>
+      <span class="card-arrow">›</span>
+    </a>
+
+    <!-- ── NOTION AI — Simple ── -->
+    <a class="link-card" href="https://www.notion.com" target="_blank" style="border-color:rgba(130,207,255,0.25);">
+      <div class="card-icon" style="background:rgba(130,207,255,0.1);border-color:rgba(130,207,255,0.2);">📒</div>
+      <div class="card-body">
+        <div class="card-title" data-id="Notion AI — Produktivitas Cerdas" data-en="Notion AI — Smart Productivity">Notion AI — Produktivitas Cerdas</div>
+        <div class="card-desc" data-id="AI untuk nulis, ringkas, dan atur hidupmu" data-en="AI to write, summarise, and organise your life">AI untuk nulis, ringkas, dan atur hidupmu</div>
+      </div>
+      <span class="card-badge free" data-id="GRATIS" data-en="FREE">GRATIS</span>
+      <span class="card-arrow">›</span>
+    </a>
+
+    <!-- ── CANVA AI — Expandable (multiple plans) ── -->
+    <!-- HOW TO ADD A NEW CANVA PRODUCT:
+         Copy a sub-link block and update href + names -->
+    <div class="platform-group" id="pg-canva">
+      <div class="platform-header" onclick="togglePlatform('pg-canva')" style="border-color:rgba(130,207,255,0.25);">
+        <div class="card-icon" style="background:rgba(130,207,255,0.1);border-color:rgba(130,207,255,0.2);">🎨</div>
+        <div class="card-body">
+          <div class="card-title" data-id="Canva AI — Desain & Konten" data-en="Canva AI — Design & Content">Canva AI — Desain &amp; Konten</div>
+          <div class="card-desc" data-id="Buat desain, video, dan konten dengan AI" data-en="Create designs, videos, and content with AI">Buat desain, video, dan konten dengan AI</div>
+        </div>
+        <span class="card-badge free" data-id="GRATIS" data-en="FREE">GRATIS</span>
+        <span class="expand-icon">⌄</span>
+      </div>
+      <div class="sub-links">
+        <a class="sub-link" href="https://play.google.com/store/apps/details?id=com.canva.editor" target="_blank">
+          <span class="sub-link-dot" style="background:rgba(130,207,255,0.4);"></span>
+          <span class="sub-link-body">
+            <span class="sub-link-name" data-id="Canva Free" data-en="Canva Free">Canva Free</span>
+            <span class="sub-link-meta" data-id="Desain gratis dengan AI dasar" data-en="Free designs with basic AI">Desain gratis dengan AI dasar</span>
+          </span>
+          <span class="sub-link-arrow">›</span>
+        </a>
+        <a class="sub-link" href="https://play.google.com/store/apps/details?id=com.canva.editor" target="_blank">
+          <span class="sub-link-dot" style="background:rgba(130,207,255,0.4);"></span>
+          <span class="sub-link-body">
+            <span class="sub-link-name" data-id="Canva Pro — AI Lengkap" data-en="Canva Pro — Full AI">Canva Pro — AI Lengkap</span>
+            <span class="sub-link-meta" data-id="Magic Write, Background Remover, AI image" data-en="Magic Write, Background Remover, AI image">Magic Write, Background Remover, AI image</span>
+          </span>
+          <span class="sub-link-arrow">›</span>
+        </a>
+        <a class="sub-link" href="https://www.canva.com/teams" target="_blank">
+          <span class="sub-link-dot" style="background:rgba(130,207,255,0.4);"></span>
+          <span class="sub-link-body">
+            <span class="sub-link-name" data-id="Canva Teams" data-en="Canva Teams">Canva Teams</span>
+            <span class="sub-link-meta" data-id="Untuk tim konten dan bisnis" data-en="For content teams and businesses">Untuk tim konten dan bisnis</span>
+          </span>
+          <span class="sub-link-arrow">›</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- ── MAKE.COM (Automation) — Expandable ── -->
+    <div class="platform-group" id="pg-make">
+      <div class="platform-header" onclick="togglePlatform('pg-make')" style="border-color:rgba(130,207,255,0.25);">
+        <div class="card-icon" style="background:rgba(130,207,255,0.1);border-color:rgba(130,207,255,0.2);">⚙️</div>
+        <div class="card-body">
+          <div class="card-title" data-id="Make.com — Otomasi Bisnis" data-en="Make.com — Business Automation">Make.com — Otomasi Bisnis</div>
+          <div class="card-desc" data-id="Hubungkan semua apps tanpa coding" data-en="Connect all your apps without coding">Hubungkan semua apps tanpa coding</div>
+        </div>
+        <span class="card-badge free" data-id="GRATIS" data-en="FREE">GRATIS</span>
+        <span class="expand-icon">⌄</span>
+      </div>
+      <div class="sub-links">
+        <a class="sub-link" href="https://www.make.com" target="_blank">
+          <span class="sub-link-dot" style="background:rgba(130,207,255,0.4);"></span>
+          <span class="sub-link-body">
+            <span class="sub-link-name" data-id="Make Free — 1.000 operasi/bln" data-en="Make Free — 1,000 ops/month">Make Free — 1.000 operasi/bln</span>
+            <span class="sub-link-meta" data-id="Mulai otomasi bisnis gratis" data-en="Start automating for free">Mulai otomasi bisnis gratis</span>
+          </span>
+          <span class="sub-link-arrow">›</span>
+        </a>
+        <a class="sub-link" href="https://www.make.com/en/pricing" target="_blank">
+          <span class="sub-link-dot" style="background:rgba(130,207,255,0.4);"></span>
+          <span class="sub-link-body">
+            <span class="sub-link-name" data-id="Make Pro — Unlimited workflows" data-en="Make Pro — Unlimited workflows">Make Pro — Unlimited workflows</span>
+            <span class="sub-link-meta" data-id="Untuk bisnis yang butuh otomasi penuh" data-en="For businesses needing full automation">Untuk bisnis yang butuh otomasi penuh</span>
+          </span>
+          <span class="sub-link-arrow">›</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- ── MIDJOURNEY — Simple ── -->
+    <a class="link-card" href="https://www.midjourney.com" target="_blank" style="border-color:rgba(130,207,255,0.25);">
+      <div class="card-icon" style="background:rgba(130,207,255,0.1);border-color:rgba(130,207,255,0.2);">🖼️</div>
+      <div class="card-body">
+        <div class="card-title" data-id="Midjourney — AI Image Generator" data-en="Midjourney — AI Image Generator">Midjourney — AI Image Generator</div>
+        <div class="card-desc" data-id="Buat gambar profesional dengan teks" data-en="Create professional images from text">Buat gambar profesional dengan teks</div>
+      </div>
+      <span class="card-badge" style="background:rgba(130,207,255,0.12);color:rgba(130,207,255,0.9);border-color:rgba(130,207,255,0.25);" data-id="AI IMAGE" data-en="AI IMAGE">AI IMAGE</span>
+      <span class="card-arrow">›</span>
+    </a>
+
+    <!-- ── ANTHROPIC API (for developers) — Simple ── -->
+    <a class="link-card" href="https://console.anthropic.com" target="_blank" style="border-color:rgba(130,207,255,0.25);">
+      <div class="card-icon" style="background:rgba(130,207,255,0.1);border-color:rgba(130,207,255,0.2);">💻</div>
+      <div class="card-body">
+        <div class="card-title" data-id="Anthropic API — Bangun AI Agent" data-en="Anthropic API — Build AI Agents">Anthropic API — Bangun AI Agent</div>
+        <div class="card-desc" data-id="API yang dipakai untuk membangun akun ini" data-en="The API used to power this account">API yang dipakai untuk membangun akun ini</div>
+      </div>
+      <span class="card-badge" style="background:rgba(130,207,255,0.12);color:rgba(130,207,255,0.9);border-color:rgba(130,207,255,0.25);" data-id="DEVELOPER" data-en="DEVELOPER">DEVELOPER</span>
+      <span class="card-arrow">›</span>
+    </a>
+
+  </div>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-diamond"></div>
+    <div class="divider-line"></div>
+  </div>
+
+  <div class="footer">
+    <p id="footer-text">Dengan mendukung lewat link ini, kamu membantu konten ini tetap gratis 🙏</p>
+    <p style="margin-top:8px">Made with ✦ for financial freedom seekers</p>
+  </div>
+
+</div>
+
+<div class="copied-toast" id="toast">✓ Copied!</div>
+
+<script>
+  // ═══════════════════════════════════════
+  // LANGUAGE COPY
+  // ═══════════════════════════════════════
+  const COPY = {
+    id: {
+      profileName: "Mindset Kaya & Kebebasan Finansial",
+      profileBio:  'Berbagi tips <strong>investasi, passive income & cuan dari AI</strong>. Gaya hidup bebas finansial dari Rp10.000 🇮🇩✈️🤖',
+      secInvest:   "📈 Investasi & Keuangan",
+      secTravel:   "✈️ Travel & Experiences",
+      secShop:     "🛍 Belanja & Lifestyle",
+      secLearn:    "🎓 Belajar & Upgrade Skill",
+      secAi:       "🤖 Tools AI & Otomasi",
+      aiChip:      "✦ Akun ini 100% dijalankan oleh AI",
+      footer:      "Dengan mendukung lewat link ini, kamu membantu konten ini tetap gratis 🙏",
+    },
+    en: {
+      profileName: "Wealthy Mindset & Financial Freedom",
+      profileBio:  'Sharing <strong>investing tips, passive income & AI income strategies</strong>. Freedom lifestyle from day one 🌏✈️🤖',
+      secInvest:   "📈 Investing & Finance",
+      secTravel:   "✈️ Travel & Experiences",
+      secShop:     "🛍 Shopping & Lifestyle",
+      secLearn:    "🎓 Learn & Upskill",
+      secAi:       "🤖 AI Tools & Automation",
+      aiChip:      "✦ This account is 100% powered by AI",
+      footer:      "By using these links you support this free content — thank you 🙏",
+    }
+  };
+
+  let currentLang = 'id';
+
+  function setLang(lang) {
+    currentLang = lang;
+    document.getElementById('btn-id').classList.toggle('active', lang === 'id');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+
+    const c = COPY[lang];
+    document.getElementById('profile-name').textContent = c.profileName;
+    document.getElementById('profile-bio').innerHTML    = c.profileBio;
+    document.getElementById('sec-invest').textContent   = c.secInvest;
+    document.getElementById('sec-travel').textContent   = c.secTravel;
+    document.getElementById('sec-shop').textContent     = c.secShop;
+    document.getElementById('sec-learn').textContent    = c.secLearn;
+    document.getElementById('sec-ai').textContent       = c.secAi;
+    document.getElementById('ai-chip').textContent      = c.aiChip;
+    document.getElementById('footer-text').textContent  = c.footer;
+
+    // Update all translatable elements
+    const key = lang === 'id' ? 'data-id' : 'data-en';
+    document.querySelectorAll('[data-id]').forEach(el => {
+      const val = el.getAttribute(key);
+      if (val) el.textContent = val;
+    });
+  }
+
+  // ═══════════════════════════════════════
+  // EXPAND / COLLAPSE PLATFORM GROUPS
+  // ═══════════════════════════════════════
+  function togglePlatform(id) {
+    const group = document.getElementById(id);
+    const isOpen = group.classList.contains('open');
+
+    // Close all others
+    document.querySelectorAll('.platform-group.open').forEach(g => {
+      if (g.id !== id) g.classList.remove('open');
+    });
+
+    // Toggle this one
+    group.classList.toggle('open', !isOpen);
+  }
+
+  // Close platform group when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.platform-group')) {
+      document.querySelectorAll('.platform-group.open').forEach(g => g.classList.remove('open'));
+    }
+  });
+</script>
+</body>
+</html>
